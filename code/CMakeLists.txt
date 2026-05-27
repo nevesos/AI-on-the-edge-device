@@ -10,8 +10,8 @@ ADD_CUSTOM_COMMAND(
 
 if(EXISTS "${SDKCONFIG}.defaults")
     if(EXISTS "sdkconfig.defaults")
-        set(SDKCONFIG_DEFAULTS "${SDKCONFIG}.defaults;sdkconfig.defaults")
-        message(STATUS "-- Using defaults: ${SDKCONFIG_DEFAULTS} + sdkconfig.defaults")
+        set(SDKCONFIG_DEFAULTS "sdkconfig.defaults;${SDKCONFIG}.defaults")
+        message(STATUS "-- Using defaults: sdkconfig.defaults + ${SDKCONFIG}.defaults")
     else()
         set(SDKCONFIG_DEFAULTS "${SDKCONFIG}.defaults")
     endif()

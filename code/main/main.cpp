@@ -165,7 +165,9 @@ bool Init_NVS_SDCard()
     // dies führt jedoch bei schlechten Kopien des AI_THINKER Boards
     // zu Problemen mit der SD Initialisierung und eventuell sogar zur reboot-loops.
     // Um diese Probleme zu kompensieren, wird der PullUp manuel gesetzt.
-    gpio_set_pull_mode(GPIO_SDCARD_D3, GPIO_PULLUP_ONLY); // HS2_D3	
+    if (GPIO_SDCARD_D3 != GPIO_NUM_NC) {
+        gpio_set_pull_mode(GPIO_SDCARD_D3, GPIO_PULLUP_ONLY); // HS2_D3
+    }
 
     // Options for mounting the filesystem.
     // If format_if_mount_failed is set to true, SD card will be partitioned and

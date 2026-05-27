@@ -644,11 +644,18 @@ string toLower(string in)
 }
 
 // CPU Temp
+#if defined(CONFIG_IDF_TARGET_ESP32)
 extern "C" uint8_t temprature_sens_read();
 float temperatureRead()
 {
 	return (temprature_sens_read() - 32) / 1.8;
 }
+#else
+float temperatureRead()
+{
+	return 0;
+}
+#endif
 
 time_t addDays(time_t startTime, int days)
 {
