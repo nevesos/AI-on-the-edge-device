@@ -316,16 +316,36 @@ bool GpioHandler::readConfig()
 //    ESP_LOGD(TAG, "readConfig - Start 1");
         
     while ((!configFile.GetNextParagraph(line, disabledLine, eof) || (line.compare("[GPIO]") != 0)) && !eof) {}
-    if (eof)
+    if (eof) {
+#if defined(BOARD_ESP32S3_CAM_DEV)
+        _isEnabled = true;
+        LEDNumbers = 1;
+        LEDType = LED_WS2812B;
+        (*gpioMap)[BUILTIN_WS2812_GPIO] = new GpioPin(BUILTIN_WS2812_GPIO, "BuiltInWS2812", GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X, GPIO_INTR_DISABLE, 8, "", true);
+        ESP_LOGI(TAG, "Use board default WS2812 on GPIO %d", (int)BUILTIN_WS2812_GPIO);
+        return true;
+#else
         return false;
+#endif
+    }
 
 //    ESP_LOGD(TAG, "readConfig - Start 2 line: %s, disabbledLine: %d", line.c_str(), (int) disabledLine);
 
 
     _isEnabled = !disabledLine;
 
-    if (!_isEnabled)
+    if (!_isEnabled) {
+#if defined(BOARD_ESP32S3_CAM_DEV)
+        _isEnabled = true;
+        LEDNumbers = 1;
+        LEDType = LED_WS2812B;
+        (*gpioMap)[BUILTIN_WS2812_GPIO] = new GpioPin(BUILTIN_WS2812_GPIO, "BuiltInWS2812", GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X, GPIO_INTR_DISABLE, 8, "", true);
+        ESP_LOGI(TAG, "Use board default WS2812 on GPIO %d", (int)BUILTIN_WS2812_GPIO);
+        return true;
+#else
         return false;
+#endif
+    }
 
 //    ESP_LOGD(TAG, "readConfig - Start 3");
 
@@ -417,6 +437,16 @@ bool GpioHandler::readConfig()
         //install gpio isr service
         gpio_install_isr_service(ESP_INTR_FLAG_LOWMED | ESP_INTR_FLAG_IRAM);
     }
+
+#if defined(BOARD_ESP32S3_CAM_DEV)
+    if (gpioExtLED == 0) {
+        LEDNumbers = 1;
+        LEDType = LED_WS2812B;
+        (*gpioMap)[BUILTIN_WS2812_GPIO] = new GpioPin(BUILTIN_WS2812_GPIO, "BuiltInWS2812", GPIO_PIN_MODE_EXTERNAL_FLASH_WS281X, GPIO_INTR_DISABLE, 8, "", true);
+        gpioExtLED = BUILTIN_WS2812_GPIO;
+        ESP_LOGI(TAG, "Use board default WS2812 on GPIO %d", (int)BUILTIN_WS2812_GPIO);
+    }
+#endif
 
     if (gpioExtLED > 0)
     {
@@ -636,6 +666,10 @@ gpio_num_t GpioHandler::resolvePinNr(uint8_t pinNr)
             return GPIO_NUM_12;
         case 13:
             return GPIO_NUM_13;
+#if defined(BOARD_ESP32S3_CAM_DEV)
+        case 48:
+            return GPIO_NUM_48;
+#endif
         default: 
             return GPIO_NUM_NC;   
     }

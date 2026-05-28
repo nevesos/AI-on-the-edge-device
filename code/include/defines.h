@@ -339,6 +339,9 @@
     //Statusled + ClassControllCamera
     #define BLINK_GPIO GPIO_NUM_2
 
+    // On-board addressable LED
+    #define BUILTIN_WS2812_GPIO GPIO_NUM_48
+
     //ClassControllCamera
     #define FLASH_GPIO GPIO_NUM_2
     #define USE_PWM_LEDFLASH                    // if __LEDGLOBAL is defined, a global variable is used for LED control, otherwise locally and each time a new
